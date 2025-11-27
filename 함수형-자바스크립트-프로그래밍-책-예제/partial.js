@@ -638,7 +638,7 @@
   _.l = _.lambda = lambda; function lambda(str) {
     if (typeof str !== 'string') return str;
     str = str.replace(/\*\*/g, '"');
-    if (!has_lambda) str = str.replace(/`/g, "'");
+    if (!has_lambda) str = str.replace(/`/g, "'"); //`
     if (lambda[str]) return lambda[str];
 
     if (str.indexOf('#') == 0)
