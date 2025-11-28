@@ -1,6 +1,49 @@
 <html>
 <script src="underscore.1.13.7-min.js"></script>
 <script>
+    let users = [
+        { id: 1, name: "ID", age: 32 },
+        { id: 2, name: "HA", age: 25 },
+        { id: 3, name: "BJ", age: 32 },
+        { id: 4, name: "PJ", age: 28 },
+        { id: 5, name: "JE", age: 27 },
+        { id: 6, name: "JM", age: 32 },
+        { id: 7, name: "HI", age: 24 }
+    ];
+
+    const add = (a, b) => a + b;
+
+    // bind 예제
+    const add10 = add.bind(null, 10);           // 올바른 사용법
+    const add20 = add.bind(20, null);           // 오류: 첫번째 인자는 this 바인딩이므로 null
+    const add30 = add.bind(null, null, 30);     // 오류: 두번째 인자는 고정 인자가 아니므로 null
+    console.log(add10(5)); // 15
+    console.log(add20(3)); // 23이 아니고 3
+    console.log(add30(7)); // 37이 아니고 30
+
+    // 고차 함수 예제
+    function callWith(val1) {
+        return function (val2, func) {
+            return func(val1, val2);
+        }
+    }
+
+
+
+    // let callWith10 = callWith(10);
+    callWith(10)(5, add); // 15
+
+    const callWithUsers = callWith(users);
+    // _.get=(list, idx) => list[idx];
+    callWithUsers(2, _.get); // {id: 3, name: "BJ", age: 32}
+    const fnUser = user => user.age < 30;
+    callWithUsers(fnUser, _.find); // {id: 2, name: "HA", age: 25}
+    callWithUsers(fnUser, _.filter);
+    // [{id: 2, name: "HA", age: 25}, {id: 4, name: "PJ", age: 28}, {id: 5, name: "JE", age: 27}, {id: 7, name: "HI", age: 24}]
+    callWithUsers(fnUser, _.some); // true
+    callWithUsers(fnUser, _.every); // false
+
+    // compose 예제
     let greet = name => "Hello, " + name;
     let exclaim = greet => greet.toUpperCase() + "!!!";
     let welcome = _.compose(greet, exclaim);
@@ -11,15 +54,6 @@
         console.log('즉시 실행 함수');
     }.call(this));
 
-    let users = [
-        { id: 1, name: "ID", age: 32 },
-        { id: 2, name: "HA", age: 25 },
-        { id: 3, name: "BJ", age: 32 },
-        { id: 4, name: "PJ", age: 28 },
-        { id: 5, name: "JE", age: 27 },
-        { id: 6, name: "JM", age: 32 },
-        { id: 7, name: "HI", age: 24 }
-    ];
 
     // filter 예제
     const filter = (list, predicate) => {
