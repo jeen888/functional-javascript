@@ -1,4 +1,66 @@
 <html>
+<!-- <script src="../partial.js"></script> -->
+<script src="underscore.1.13.7-min.js"></script>
+<script>
+    let greet = name => "Hello, " + name;
+    let exclaim = greet => greet.toUpperCase() + "!!!";
+    let welcome = _.compose(greet, exclaim);
+    console.log(welcome("JavaScript")); // Hello, JAVASCRIPT!!!
+
+    (function () {
+        console.log(this);
+        console.log('즉시 실행 함수');
+    }.call(this));
+
+    let users = [
+        { id: 1, name: "ID", age: 32 },
+        { id: 2, name: "HA", age: 25 },
+        { id: 3, name: "BJ", age: 32 },
+        { id: 4, name: "PJ", age: 28 },
+        { id: 5, name: "JE", age: 27 },
+        { id: 6, name: "JM", age: 32 },
+        { id: 7, name: "HI", age: 24 }
+    ];
+
+    // partial 예제
+    const abc = (a, b, c) => {
+        console.log(a, b, c);
+    }
+    let ac = _.partial(abc, 'A', _, 'C');   // b 자리 비워둠
+    ac('B'); // A B C
+
+    const bj = {
+        name: 'BJ',
+        // greet: _.partial((a, b) => console.log(a, this.name, b), '저는 ', "입니다.") // this가 undefined
+        greet: _.partial(function (a, b) { console.log(a, this.name, b) }, '저는 ', "입니다.")  // this가 bj 객체를 가리킴
+    };
+    bj.greet(); // 저는 BJ입니다.
+    bj.greet.call({ name: 'HA' }); // 이후에도 this를 바꿀 수 있음.
+    const greetPJ = bj.greet.bind({ name: 'PJ' }); // bind는 새로운 함수를 리턴
+    greetPJ(); // 저는 PJ입니다
+    bj.greet(); // 저는 BJ입니다. 여전히 잘 보존되어 있음.
+
+    // filter 예제
+    const filter = (list, predicate) => {
+        const newList = [];
+        for (let i = 0; i < list.length; i++) {
+            if (predicate(list[i])) {
+                newList.push(list[i]);
+            }
+        }
+        return newList;
+    }
+    let u30 = filter(users, user => user.age < 30);
+    console.table('30세 미만: ', u30);
+
+    // clousure 예제
+    function addMaker(a) {
+        return function (b) {
+            return a - b;
+        }
+    }
+    console.log('addMaker(10)(4): ' + addMaker(10)(4)); // 6
+</script>
 
 <head>
 
