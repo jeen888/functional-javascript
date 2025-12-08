@@ -2,64 +2,124 @@
 <!-- <script src="../partial.js"></script> -->
 <script src="underscore.1.13.7-min.js"></script>
 <script>
-    let greet = name => "Hello, " + name;
-    let exclaim = greet => greet.toUpperCase() + "!!!";
-    let welcome = _.compose(greet, exclaim);
-    console.log(welcome("JavaScript")); // Hello, JAVASCRIPT!!!
+    !function () {
+        // # 기묘한 문법 예제(ES6)
 
-    (function () {
-        console.log(this);
-        console.log('즉시 실행 함수');
-    }.call(this));
+        // 화살표 함수
+        var arr = [1, 2, 3];
+        arr.map(function (v) {
+            console.log(v * 2);
+        });
+        arr.map(v => console.log(v * 2)); // 화살표 함수
+        // 모두 2 4 6 출력
+        arr.filter(v => v % 2 === 1).forEach(v => console.log(v)); // filter와 forEach에서 화살표 함수 사용
+        // 1 3 출력
+        arr.reduce((acc, v) => acc + v, 0); // reduce에서 화살표 함수 사용
+        console.log('arr.reduce: ' + arr.reduce((acc, v) => acc + v, 0)); // arr.reduce: 6 출력
+        console.log(arr.reduce((a, b) => a + b)); // 6 출력
 
-    let users = [
-        { id: 1, name: "ID", age: 32 },
-        { id: 2, name: "HA", age: 25 },
-        { id: 3, name: "BJ", age: 32 },
-        { id: 4, name: "PJ", age: 28 },
-        { id: 5, name: "JE", age: 27 },
-        { id: 6, name: "JM", age: 32 },
-        { id: 7, name: "HI", age: 24 }
-    ];
 
-    // partial 예제
-    const abc = (a, b, c) => {
-        console.log(a, b, c);
-    }
-    let ac = _.partial(abc, 'A', _, 'C');   // b 자리 비워둠
-    ac('B'); // A B C
+        // 인자, this, arguments 출력
+        function test(a, b, c) {
+            console.log('a b c: ', a, b, c);
+            console.log('this: ', this);
+            console.log('arguments: ', arguments);
+        }
+        test(1, 2, 3); // a b c:  1 2 3  this:  Window  arguments:  [Arguments] { '0': 1, '1': 2, '2': 3 }
+        var o1 = { name: 'obj1' };
+        o1.test = test;
+        o1.test(4, 5, 6); // a b c:  4 5 6  this:  { name: 'obj1', test: [Function: test] }  arguments:  [Arguments] { '0': 4, '1': 5, '2': 6 }
+        var a1 = [7, 8, 9];
+        a1.test = test;
+        a1.test(10, 11, 12); // a b c:  10 11 12  this:  [ 7, 8, 9, test: [Function: test] ]  arguments:  [Arguments] { '0': 10, '1': 11, '2': 12 }
+        // 주의!! this가 다시 Window가 됨. 
+        var o1_test = o1.test;
+        o1_test(13, 14, 15); // a b c:  13 14 15  this:  Window  arguments:  [Arguments] { '0': 13, '1': 14, '2': 15 }
 
-    const bj = {
-        name: 'BJ',
-        // greet: _.partial((a, b) => console.log(a, this.name, b), '저는 ', "입니다.") // this가 undefined
-        greet: _.partial(function (a, b) { console.log(a, this.name, b) }, '저는 ', "입니다.")  // this가 bj 객체를 가리킴
-    };
-    bj.greet(); // 저는 BJ입니다.
-    bj.greet.call({ name: 'HA' }); // 이후에도 this를 바꿀 수 있음.
-    const greetPJ = bj.greet.bind({ name: 'PJ' }); // bind는 새로운 함수를 리턴
-    greetPJ(); // 저는 PJ입니다
-    bj.greet(); // 저는 BJ입니다. 여전히 잘 보존되어 있음.
+        return;
 
-    // filter 예제
-    const filter = (list, predicate) => {
-        const newList = [];
-        for (let i = 0; i < list.length; i++) {
-            if (predicate(list[i])) {
-                newList.push(list[i]);
+        // function
+        new function () { console.log('new function()'); }  // 익명 생성자 함수
+        !function (a) { console.log('즉시 실행 함수 a = ' + a); }(10); // 즉시 실행 함수
+        // !a=> console.log('즉시 실행 화살표 함수')(100); // 즉시 실행 화살표 함수, ERROR
+
+
+        // 배열에 숫자가 아닌 key 사용, length에 영향 없음
+        var obj10 = [0, 1];
+        obj10['name'] = 'obj10';
+        obj10['fn'] = function () { console.log('obj10.length = ' + this.length) }; // 화살표 함수는 this 바인딩이 안됨
+        console.log(obj10); // [ 0, 1, name: 'obj10' ]
+        console.log(obj10.length); // 2
+        obj10.fn(); // obj10.length = 2
+
+
+        // var obj8 = () => { }; // 화살표 함수는 객체로 사용 불가
+        var obj8 = function () { }; //함수를 객체로 사용
+        obj8.a = 1;
+        obj8.b = 2;
+        console.log(obj8); // [Function: obj8] { a: 1, b: 2 }
+        var obj5 = { [true ? 'a' : 'b']: 1 };   // 원래 생성시 계산식 불가였으나 ES6부터 []내에서 계산식 가능
+        console.log(obj5);  // { a: 1 }
+
+        let greet = name => "Hello, " + name;
+        let exclaim = greet => greet.toUpperCase() + "!!!";
+        let welcome = _.compose(greet, exclaim);
+        console.log(welcome("JavaScript")); // Hello, JAVASCRIPT!!!
+
+        (function () {
+            console.log(this);
+            console.log('즉시 실행 함수');
+        }.call(this));
+
+        let users = [
+            { id: 1, name: "ID", age: 32 },
+            { id: 2, name: "HA", age: 25 },
+            { id: 3, name: "BJ", age: 32 },
+            { id: 4, name: "PJ", age: 28 },
+            { id: 5, name: "JE", age: 27 },
+            { id: 6, name: "JM", age: 32 },
+            { id: 7, name: "HI", age: 24 }
+        ];
+
+        // partial 예제
+        const abc = (a, b, c) => {
+            console.log(a, b, c);
+        }
+        let ac = _.partial(abc, 'A', _, 'C');   // b 자리 비워둠
+        ac('B'); // A B C
+
+        const bj = {
+            name: 'BJ',
+            // greet: _.partial((a, b) => console.log(a, this.name, b), '저는 ', "입니다.") // this가 undefined
+            greet: _.partial(function (a, b) { console.log(a, this.name, b) }, '저는 ', "입니다.")  // this가 bj 객체를 가리킴
+        };
+        bj.greet(); // 저는 BJ입니다.
+        bj.greet.call({ name: 'HA' }); // 이후에도 this를 바꿀 수 있음.
+        const greetPJ = bj.greet.bind({ name: 'PJ' }); // bind는 새로운 함수를 리턴
+        greetPJ(); // 저는 PJ입니다
+        bj.greet(); // 저는 BJ입니다. 여전히 잘 보존되어 있음.
+
+        // filter 예제
+        const filter = (list, predicate) => {
+            const newList = [];
+            for (let i = 0; i < list.length; i++) {
+                if (predicate(list[i])) {
+                    newList.push(list[i]);
+                }
+            }
+            return newList;
+        }
+        let u30 = filter(users, user => user.age < 30);
+        console.table('30세 미만: ', u30);
+
+        // clousure 예제
+        function addMaker(a) {
+            return function (b) {
+                return a - b;
             }
         }
-        return newList;
-    }
-    let u30 = filter(users, user => user.age < 30);
-    console.table('30세 미만: ', u30);
-
-    // clousure 예제
-    function addMaker(a) {
-        return function (b) {
-            return a - b;
-        }
-    }
-    console.log('addMaker(10)(4): ' + addMaker(10)(4)); // 6
+        console.log('addMaker(10)(4): ' + addMaker(10)(4)); // 6
+    }.call(this);
 </script>
 
 <head>
