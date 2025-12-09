@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <script src="./lodash.min-4.17.21.js"></script>
+    <script type="text/javascript">
+        console.log('Lodash version:', _.VERSION);
+        // Lodash의 _.flow 함수 예제
+        console.log(_.flow(
+            x => x + 1,
+            x => x * 2,
+            x => x - 3
+        )(5)); // 9
+
+        _.flow(
+            x => x + 10,
+            x => x * 20,
+            x => x - 30,
+            console.log
+        )(5); // 9
+
+
+    </script>
+</head>
+
+<body></body>
+
+</html>
