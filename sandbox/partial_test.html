@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <script src="./underscore.1.13.7-min.js"></script>
+    <script type="text/javascript">
+        // _.partial + _.compose 예제
+        _.compose(console.log, a => a - 2, a => a + 5)(0); // 3 출력
+
+        var falsy_values = _.compose(
+            _.partial(_.isEqual, -1),
+            _.partial(_.findIndex, _, _.identity)
+        );
+        console.log(falsy_values([1, true, {}])); // false
+        console.log(falsy_values([0, 1, false])); // false
+        console.log(falsy_values([0, "", false])); // true
+
+        var some = _.negate(falsy_values);
+        console.log(some([1, true, {}])); // true
+        console.log(some([0, 1, false])); // true
+        console.log(some([0, "", false])); // false
+
+        var every = _.compose(
+            _.partial(_.isEqual, -1),
+            _.partial(_.findIndex, _, _.negate(_.identity))
+        );
+        console.log(every([1, true, {}])); // true
+        console.log(every([0, 1, false])); // false
+        console.log(every([0, "", false])); // false
+        console.log('####################################################');
+        const add = (a, b) => a + b;
+        const sub = (a, b) => a - b;
+        const m = (...args) => {
+            let iter = args[args.length - 1];
+            args.length--;
+            return _.reduce(args, iter);
+        }
+        m(100, 50, add); // 150
+        m(100, 50, 10, add); // 160
+        console.log(m(100, 50, 10, 5, add)); // 165, 하나만 출력해 봄.
+        m(100, 50, sub); // 50
+        m(100, 50, 10, sub); // 40
+        m(100, 50, 10, 5, sub); // 35
+
+
+        // method 호출용 partial
+        var method = function (obj, method) { return obj[method].apply(obj, _.rest(arguments, 2)) };    // arguments는 화살표함수에서 사용 불가
+        var push = _.partial(method, _, 'push');
+        var shift = _.partial(method, _, 'shift');
+        var a = [1, 2];
+        push(a, 3); // a.push(3)
+        shift(a); // a.shift()  // [2,3]
+        var b = method([1, 2, 3], 'concat', 4, 5);
+
+        // 함수 조립 - partial
+        var add_all = _.partial(_.reduce, _, (a, b) => a + b);
+        console.log(add_all([1, 2, 3, 4, 5])); // 15
+
+
+        // basic partial example
+        var pc = _.partial(console.log, 1);
+        pc(2, 3); // 1 2 3
+
+        var pc = _.partial(console.log, _, 2);
+        pc(10); // 10 2
+    </script>
+</head>
+
+<body></body>
+
+</html>
