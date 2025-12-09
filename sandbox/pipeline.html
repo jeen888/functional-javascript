@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <script src="./underscore.1.13.7-min.js"></script>
+    <script type="text/javascript">
+
+
+        // 마이클포거스의 _.pipeline
+        _.pipeline = function () {
+            var funs = arguments;
+
+            return function (seed) {
+                return _.reduce(funs,
+                    function (l, r) { return r(l); },
+                    seed
+                )
+            }
+        };
+        var div_square = _.pipeline(
+            // (x, y, z) => (x + y + z) / 2,    // NaN
+            x => x / 2,
+            x => x * x
+        );
+        console.log(div_square(6)); // 9
+
+    </script>
+</head>
+
+<body></body>
+
+</html>
