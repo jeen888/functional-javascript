@@ -2,31 +2,66 @@
 
 <head>
     <script src="../partial.js"></script>
-    <script src="./lodash.min-4.17.21.js"></script>
+    <!-- <script src="./lodash.min-4.17.21.js"></script> -->
     <script type="text/javascript">
+        (() => {
+            // console.log('Lodash version:', _.VERSION);
 
-        console.log('Lodash version:', _.VERSION);
-        // _.go 예제 namespace 충돌 방지
-        _p.go(5,
-            x => x + 1,
-            x => x * 2,
-            x => x - 3,
-            console.log
-        ); // 9
+            _.go(_.range(3), // 각 값은 단지 placeholder일 뿐
+                _.map(() => new Date()),
+                // dates => dates.map(d => d.getTime()),
+                JSON.stringify,
+                console.log
+            ); // Partial.js의 _.go 예제
+            // 비동기 버전
+            _.go(_.range(3),
+                // _.map(() => new Promise(resolve => setTimeout(() => resolve(new Date()), 1000))),
+                _.map(() => new Promise(resolve => setTimeout(() => resolve(_.random(100)), 1000))),
+                JSON.stringify,
+                console.log
+            ); // Partial.js의 비동기 _.go 예제
+            _.go(_.range(3),
+                _.map(_.callback((val, i, list, next) => setTimeout(() => next(new Date()), 1000))),
+                JSON.stringify,
+                console.log
+            ); // Partial.js의 비동기 _.go 예제 - _.callback 사용
 
-        // _.mr 예제 namespace 충돌 방지, Multiple Return
-        _p.go(_p.mr(2, 3),
-            (x, y) => x + y,
-            x => x * 2,
-            console.log
-        ); // 10
-        _p.go(_p.mr(2, 3, 5),
-            (x, y, z) => x + y + z,
-            x => x * 10,
-            console.log
-        ); // 100
+            return;
+
+            // _.go 예제 namespace 충돌 방지
+            _p.go(5,
+                x => x + 1,
+                x => x * 2,
+                x => x - 3,
+                // console.log
+            ); // 9
+
+            // _.mr 예제 namespace 충돌 방지, Multiple Return
+            _p.go(_p.mr(2, 3),
+                (x, y) => x + y,
+                x => x * 2,
+                // console.log
+            ); // 10
+            _p.go(_p.mr(2, 3, 5),
+                (x, y, z) => x + y + z,
+                x => x * 10,
+                // console.log
+            ); // 100
 
 
+            // ############ 비동기 ############
+            // 동기
+            console.log(JSON.stringify(_.map([0, 0, 0], () => new Date()))); // 동일한 시점의 Date 객체 생성
+
+            // 비동기
+            console.log('비동기 처리 시작...');
+            console.time('async_dates');
+            _p.map([0, 0, 0], () => new Promise(resolve => setTimeout(() => resolve(new Date()), 1000)))
+                .then(dates => {
+                    console.log(JSON.stringify(dates)); // 1초 후에 생성된 Date 객체 출력, 각 요소마다 1초씩 지연
+                    console.timeEnd('async_dates'); // 약 3+초 소요
+                });
+        })();
     </script>
 </head>
 

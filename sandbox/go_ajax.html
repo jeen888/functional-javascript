@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <script src="../partial.js"></script>
+    <!-- <script src="./lodash.min-4.17.21.js"></script> -->
+    <script type="text/javascript">
+        // --- 1. 비동기 유틸리티 함수 정의 ---
+
+        // (1) AJAX 호출 함수: URL을 받아 Promise<응답객체>를 반환합니다.
+        // Partial.js는 Promise를 지원하므로 fetch를 그대로 사용할 수 있습니다.
+        const fetchUrl = url => fetch(url);
+
+        // (2) 응답을 JSON 객체로 파싱하는 함수: Promise<JSON객체>를 반환합니다.
+        const parseJson = response => {
+            // response가 Promise<Response> 객체이므로 .json()도 비동기입니다.
+            if (!response.ok) {
+                throw new Error(`HTTP Error! Status: ${response.status}`);
+            }
+            return response.json();
+        };
+
+        // (3) 데이터 가공 함수: JSON 데이터를 받아 가공된 문자열을 반환합니다. (동기 함수)
+        const processData = data => {
+            // 예시: 받은 데이터의 'id'와 'title'을 추출하여 문자열로 포맷
+            // return `ID: ${data.id}, Title: "${data.title}"`;
+            return data;
+        };
+
+        // (4) 최종 출력 함수: 가공된 문자열을 받아 DOM에 출력 (동기 함수)
+        const displayResult = (text) => {
+            // const outputDiv = document.getElementById('output');
+            // outputDiv.innerHTML = `<p>✅ 처리 완료:</p><p class="result-text">${text}</p>`;
+            return text; // 다음 체인에 전달할 수도 있습니다.
+        };
+
+
+        // --- 2. _.go를 이용한 비동기 파이프라인 구성 ---
+
+        // 가상 API URL (JSON Placeholder 사용)
+        // const API_URL = 'https://jsonplaceholder.typicode.com/posts/1';
+        const API_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+        // 1. API_URL을 초기값으로 설정하고 파이프라인 시작
+        // _p.go(
+        //     API_URL,        // (초기값)
+        //     fetchUrl,       // (1) URL -> Response (Promise 대기)
+        //     parseJson,      // (2) Response -> JSON 객체 (Promise 대기)
+        //     processData,    // (3) JSON 객체 -> 가공된 문자열 (동기)
+        //     displayResult,   // (4) 가공된 문자열 -> 화면 출력 (동기)
+        //     console.log
+        // )
+        //     .catch(error => {
+        //         // 파이프라인 중 Promise에서 오류 발생 시 처리
+        //         // document.getElementById('output').innerHTML = `<p class="error">❌ 오류 발생: ${error.message}</p>`;
+        //         console.error(error);
+        //     });    
+
+        // simple test
+        _.go(API_URL,// + '/1',
+            url => fetch(url),
+            response => response.json(),
+            // data => data.map(item => item.id),
+            // titles => titles.join(', '),
+            console.table
+        )
+        // .catch(error => {
+        //     console.error('Error occurred:', error);
+        // });
+    </script>
+</head>
+
+<body></body>
+
+</html>

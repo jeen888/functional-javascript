@@ -69,6 +69,38 @@
             console.log
         )(products); // 180
 
+        // ############## 비동기 처리 예제
+        const asyncAdd = (x, y) => new Promise(resolve => {
+            // 10초 대기
+            setTimeout(() => resolve(x + y), 2000);
+        });
+
+        // 비동기 파이프라인 구현 (Promise 체이닝을 이용)
+        const asyncFlow = (funs) => (initialValue) => {
+            return _.reduce(funs, (promise, fn) => {
+                // 이전 Promise가 해결된 후, 다음 함수를 실행하는 새로운 Promise를 반환
+                return promise.then(fn);
+            }, Promise.resolve(initialValue));
+        };
+
+        // --- 실행 ---
+        console.log('Starting async flow...');
+
+        asyncFlow([
+            // 첫 번째 함수는 초기값을 받음 (initialValue: 0)
+            (initial) => asyncAdd(initial + 5, 10),
+
+            // 다음 함수는 앞 Promise의 결과값 (sum: 15)을 받음
+            sum => asyncAdd(sum, 20),
+
+            // 최종 결과값 (total: 35)을 받음
+            total => console.log('Total after async additions:', total)
+        ])(0); // 초기값 0으로 시작
+
+        // 출력:
+        // Starting async flow... (즉시)
+        // ... 2 후 ...
+        // Total after async additions: 35
 
     </script>
 </head>
