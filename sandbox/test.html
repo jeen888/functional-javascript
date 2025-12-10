@@ -3,7 +3,16 @@
 <script src="underscore.1.13.7-min.js"></script>
 <script>
     !function () {
-        // # 기묘한 문법 예제(ES6)
+        var list = _.range(10);
+        console.log(_.initial(list, 3)); // [0,1,2,3,4,5,6] - initial에서 2번째 인자는 제거할 개수(뒤에서부터)
+        console.log(_.rest(list, 4)); // [4,5,6,7,8,9] - rest에서 2번째 인자는 제거할 개수(앞에서부터)
+        console.log(_.last(list, 3)); // [7,8,9] - last에서 2번째 인자는 가져올 개수(뒤에서부터)
+        console.log(_.first(list, 4)); // [0,1,2,3] - first에서 2번째 인자는 가져올 개수(앞에서부터)
+        console.log(_.without(list, 3, 5, 7)); // [0,1,2,4,6,8,9] - 3,5,7 제외한 나머지
+        var list2 = _.clone(list);  // 얕은 복사
+        console.log(_.isEqual(list, list2)); // true
+        console.log(list == list2); // false
+        var list3 = _.extend([], list); // 깊은 복사
 
         // 화살표 함수
         var arr = [1, 2, 3];

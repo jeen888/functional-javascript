@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <script src='../partial.js'></script>
+    <script src='./users.data.js'></script>
+    <script type='text/javascript'>
+        (() => {
+            _.go(users, // 40대 미만 사용자 2명 추출
+                _.loop((list, user) => user.age < 40 && list.push(user) == 5 ? _.break(list) : list, []),
+                _.identity(list => list.sort((a, b) => a.name < b.name ? 1 : (a.name == b.name ? 0 : -1))),  // 이름 역순
+                // _.sortBy((a, b) => a.name < b.name ? 1 : -1)),  // error: Comparator 함수 지원 안 함
+                // _.sortBy('age'),
+                // _.sortBy((a, b) => a.age - b.age),
+                // _.sortBy('name'),
+                // _.sortBy(user => -user.age), // reverse order
+                // _.orderBy(['age'], ['desc']),
+                // _.reverse('age'),   // error: _.reverse is not a function
+                console.table
+                // d => Promise.resolve(d) // 비동기 처리 예제
+            )
+                // .then(fin => console.table(fin))
+                // .catch(err => console.error(err))
+                ;
+        })();
+    </script>
+
+<body>
+
+</body>
+
+</html>
