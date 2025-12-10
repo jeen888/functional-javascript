@@ -18,6 +18,14 @@
             console.log
         )(5); // 9
 
+        // 다중 인자를 배열로 받는 예제
+        _.flow(
+            arr => _.filter(arr, n => n % 2 === 0),
+            arr => _.map(arr, n => n * n),
+            arr => _.take(arr, 5),
+            console.log
+        )(_.range(1, 101)); // [4, 16, 36, 64, 100]
+
 
     </script>
 </head>
