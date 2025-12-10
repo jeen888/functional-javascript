@@ -26,6 +26,49 @@
             console.log
         )(_.range(1, 101)); // [4, 16, 36, 64, 100]
 
+        // _.flow를 통한 조합
+        const products = [
+            { id: 1, name: 'Laptop', price: 1000, discounted_price: 900 },
+            { id: 2, name: 'Phone', price: 500, discounted_price: 450 },
+            { id: 3, name: 'Tablet', price: 300, discounted_price: 300 },
+            { id: 4, name: 'Monitor', price: 200, discounted_price: 180 },
+            { id: 5, name: 'Keyboard', price: 100, discounted_price: 90 },
+        ];
+
+        // 10% 이상 할인된 제품 필터링
+        _.flow(
+            products => _.filter(products, p => (p.price - p.discounted_price) / p.price >= 0.1),
+            products => _.map(products, p => ({ id: p.id, name: p.name, discount: p.price - p.discounted_price })),
+            products => _.sortBy(products, 'discount').reverse(),
+            // _.map(products => `${products.name}: $${products.discount}`),
+            console.table
+        )(products);
+
+        // 할인 상품 중 가격이 가장 낮은 상품의 이름 찾기
+        _.flow(
+            // products => _.filter(products, p => (p.price - p.discounted_price) / p.price >= 0.1),
+            products => _.filter(products, p => p.price > p.discounted_price),
+            products => _.minBy(products, 'discounted_price'),
+            product => product ? product.name : null,
+            console.log
+        )(products);
+
+        // 할인이 없는 상품 중 가격이 가장 낮은 상품의 name 찾기
+        _.flow(
+            products => _.filter(products, p => p.price === p.discounted_price),
+            products => _.minBy(products, 'price'),
+            // product => _.property('id')(product),
+            product => product.name || null,
+            console.log
+        )(products);
+
+        // 총 할인 금액 계산
+        _.flow(
+            products => _.map(products, p => p.price - p.discounted_price),
+            discounts => _.sum(discounts),
+            console.log
+        )(products); // 180
+
 
     </script>
 </head>
