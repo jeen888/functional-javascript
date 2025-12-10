@@ -27,7 +27,7 @@
                 console.log
             ); // Partial.js의 비동기 _.go 예제 - _.callback 사용
 
-            return;
+            // return;
 
             // _.go 예제 namespace 충돌 방지
             _p.go(5,
@@ -62,6 +62,31 @@
                     console.log(JSON.stringify(dates)); // 1초 후에 생성된 Date 객체 출력, 각 요소마다 1초씩 지연
                     console.timeEnd('async_dates'); // 약 3+초 소요
                 });
+
+
+
+            // 데이터 치환
+            _.go({ name: "Dool", age: 25 },
+                // _.string$(`
+                _.s$(`
+                    <h2>User Info</h2>
+                    <p>Name: {{$.name}}</p>
+                    <p>Age: {{$.age}}</p>
+                `),
+                // html => document.body.innerHTML = html,
+                console.log
+            );
+
+            const tpl = _.template('user, team', `
+                <h2>User Info</h2>
+                <p>Name: {{user.name}}</p>
+                <p>Age: {{user.age}}</p>
+                <p>Team: {{team}}</p>
+            `);
+            var user = { name: 'Tom', age: 30 };
+            var team = 'Red';
+            var html = tpl(user, team);
+            console.log(html);
         })();
     </script>
 </head>
