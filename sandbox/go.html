@@ -1,0 +1,23 @@
+<html>
+
+<head>
+    <script src="../partial.js"></script>
+    <script src="./lodash.min-4.17.21.js"></script>
+    <script type="text/javascript">
+
+        console.log('Lodash version:', _.VERSION);
+        // _.go 예제 namespace 충돌 방지
+        _p.go(5,
+            x => x + 1,
+            x => x * 2,
+            x => x - 3,
+            console.log
+        ); // 9
+
+
+    </script>
+</head>
+
+<body></body>
+
+</html>
