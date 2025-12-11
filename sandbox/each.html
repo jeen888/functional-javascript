@@ -6,7 +6,10 @@
     <script src='./users.data.js'></script>
     <script type='text/javascript'>
         $(() => {
-
+            const hi = list => list.forEach(console.log);
+            const hi2 = _.each(console.log);
+            // hi(_.range(5)); // 0 1 2 3 4 출력
+            hi2(_.range(5)); // 0 1 2 3 4 출력
         });
     </script>
 
