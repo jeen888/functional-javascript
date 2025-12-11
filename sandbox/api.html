@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    <script src='../jquery.js'></script>
+    <script src='../partial.js'></script>
+    <script src='./users.data.js'></script>
+    <script type='text/javascript'>
+        $(() => {
+            //_.partial
+            (() => {
+                const sub = (a, b) => a - b;
+                // let sub10 = _.partial(sub, 10);
+                let sub10 = _(sub, 10); // _==_.partial
+                console.log(sub10(7));    // 3
+
+                let sub1 = _(sub, _, 10);
+                console.log(sub1(7));   // -3
+            })();
+        });
+    </script>
+
+<body>
+
+</body>
+
+</html>
