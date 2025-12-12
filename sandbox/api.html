@@ -6,16 +6,123 @@
     <script src='./users.data.js'></script>
     <script type='text/javascript'>
         $(() => {
-            //_.partial
-            (() => {
-                const sub = (a, b) => a - b;
-                // let sub10 = _.partial(sub, 10);
-                let sub10 = _(sub, 10); // _==_.partial
-                console.log(sub10(7));    // 3
+            // 모든 변수 선언은 밑에서 재정의 가능하도록 var 로 
+            console.log('_.partial(= _) : 커링 #################################################');
+            var sub = (a, b) => a - b;
+            // let sub10 = _.partial(sub, 10);
+            var sub10 = _(sub, 10); // _==_.partial
+            console.log(sub10(7));    // 3
 
-                let sub1 = _(sub, _, 10);
-                console.log(sub1(7));   // -3
-            })();
+            var sub1 = _(sub, _, 10);
+            console.log(sub1(7));   // -3
+
+
+
+
+            console.log('___ : 가변인자 placeholder #################################################');
+            var pc = _(console.log, ___, 2, 3);
+            pc(1);  //1 2 3
+            pc(1, 4, 5, 6);    //1 4 5 6 2 3
+
+            var pc = _(console.log, _, 2, ___, 6);
+            pc(1, 3, 4, 5); //1 2 3 4 5 6
+
+            var pc = _(console.log, _, 2, ___, 5, _, 7);
+            pc(1); // 1 2 5 undefined 7
+            pc(1, 3, 4);    //1 2 3 5 4 7
+            pc(1, 3, 4, 6, 8);  //1 2 3 4 6 5 8 7
+
+
+
+            console.log('_.pipe(= __) : 좌->우 함수 합성 #################################################');
+            var sum = (a, b) => a + b;
+            var square = a => a * a;
+
+            var f1 = __(sum, square, square);
+            var result = f1(1, 2);
+            console.log(result); // 81
+
+
+
+
+            console.log('_.go : 파이프라인 즉시 실행 버전, 첫인자로 데이터, 두번째 부터 함수 결과 리턴 #################################################');
+            _.go(10,
+                a => a * 10,
+                a => a - 50,
+                a => a + 10,
+                console.log // 60
+            );
+
+
+            console.log('_.mr : Multiple Results 다음 함수에게 2개 이상의 인자 전달 가능 #################################################');
+            _.go(10,
+                a => _.mr(a * 10, 50),
+                (a, b) => a - b,
+                a => a + 10,
+                console.log // 60
+            )
+            _.go(_.mr(2, 3),
+                (a, b) => a + b,
+                a => a * a,
+                console.log //25
+            )
+            _.go(_.to_mr([2, 3]),   // 배열을 값으로 받아 멀티 리턴 배열(mr) 만듦.
+                (a, b) => a + b,
+                console.log
+            )
+
+            console.log('_.tap 받아둔 함수들 모두 실행 후 처음 받은 인자 리턴하는 파이프라인 함수 #################################################');
+            _.go(10,
+                _.tap(
+                    a => a * a,
+                    console.log // 100
+                ),
+                console.log // 10
+            )
+
+            console.log('_.all : 같은 인자를 다수의 함수에 전달, 각 함수 리턴을 모아 다음 함수로 전달 #################################################');
+            _.go(10,
+                _.all(
+                    a => a * a,
+                    a => a - 5,
+                ),
+                console.log // 100 5
+            )
+
+            console.log('_.spread : 다수 인자 순서대로 함수에 전달, 각 리턴을 다음 함수에 전달 #################################################');
+            _.go(_.mr(10, 20),
+                _.spread(
+                    a => a * a,
+                    a => a * a
+                ),
+                console.log // 100 400
+            )
+
+            console.log('Collections #################################################');
+            console.log('_.each(list, iteratee) : 리스트 끝까지 순회하여 함수 실행 #################################################');
+            // _.each([1, 2, 3], alert);
+            // _.each({ one: 1, two: 2, three: 3 }, alert);
+
+            console.log('_.map(list, iteratee) : 리스트 순회, 주어진 함수로 새 배열 생성 #################################################');
+            _.go(_.map([1, 2, 3], num => num * 3), console.log); // [3,6,9]
+            _.go(_.map({ one: 1, two: 2, three: 3 }, num => num * 3), console.log); // [3,6,9]
+            _.go(_.map([[1, 2], [3, 4]], _.first), console.log);    // [1,3]
+
+            console.log('_.reduce(list, iteratee, [memo]) inject 혹은 foldl라고 불리는 이 함수는 '
+                + '리스트를 순회하며 하나의 값을 추출합니다. memo는 옵션값이며 추출될 값의 초기값이 됩니다. #################################################');
+            _.go(_.reduce([1, 2, 3], (memo, num) => memo + num, 100), console.log); // 106
+
+            console.log('_.reduceRight(list, iteratee, [memo]) : _.reduce 반대 방향 #################################################');
+            var list = [[0, 1], [2, 3], [4, 5]];
+            var flat = _.reduceRight(list, (a, b) => a.concat(b), []);
+            console.log(flat);
+
+            console.log('_.find(list, predicate) : 리스트 내부 관찰 predicate 결과 참인 값들 배열 리턴 ##################################################');
+            _.go(_.filter([1, 2, 3, 4, 5, 6], num => num % 2 == 0), console.log);
+
+            console.log('_.where[list, properties] : 리스트 내부 값 관찰하여 프로퍼티를 포함하는 객체 배열 반환 #################################################');
+            var db = [{ a: 1, b: 2 }, { a: 5, b: 6 }, { a: 9, b: 0, c: 8 }];
+            _.go(_.where(db, { a: 9, b: 0 }), console.log); // [{ a: 9, b: 0, c: 8 }]
         });
     </script>
 
