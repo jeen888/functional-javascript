@@ -140,6 +140,134 @@
 
             console.log('_.invoke(list, methodName, *arguments) : 리스트의 각 값이 가지고 있는 메소드를 실행 #################################################');
             _.go(_.invoke([[5, 1, 7], [3, 2, 1]], 'sort'), console.log) // [1,5,7], [1,2,3]
+
+            console.log('_.pluck(list, methodName, *arguments) : 프로퍼티의 값만 추출 #################################################');
+            _.go(_.pluck([{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }], 'name'), console.log); // ['moe', 'larry', 'curly']
+
+            console.log('_.max(list, [iteratee]) : 리스트 값 중 최대값 리턴 #################################################');
+            _.go(_.max([{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }], list => list.age), console.log);
+
+            console.log('_.min(list, [iteratee]) : 리스트 값 중 최소값 리턴 #################################################');
+            _.go(_.min([{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }], list => list.age), console.log);
+
+            console.log('_.sortBy(list, iteratee) : 리스트 값들 정렬 #################################################');
+            _.go(_.sortBy([{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }], 'name'), console.log); // 
+
+            console.log('_.groupBy(list, iteratee) : 리스트 값들을 iteratee를 통해 특정 집합으로 분류 #################################################');
+            _.go(_.groupBy([1.3, 2.1, 2.4], num => Math.floor(num)), console.log); //{1: [1.3], 2: [2.1, 2.4]}
+            _.go(_.groupBy(['one', 'two', 'three'], 'length'), console.table); // {3: ['one', 'two'], 5: ['three']}
+
+            console.log('_.indexBy(list, iteratee) : 특정 리스트의 값을 인덱스 값으로 반영한 객체 리턴(값이 유니크 할 때) #################################################');
+            _.go(_.indexBy([{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }], 'age'), console.table); // 
+
+            console.log('_.countBy(list, iteratee) : 리스트의 값들을 iteratee를 통해 분류된 값의 개수 정리한 객체 반환 #################################################');
+            _.go(_.countBy([1, 2, 3, 4, 5], num => num % 2 == 0 ? 'even' : 'odd'), console.table);
+
+            console.log('_.shuffle(list) : 리스트의 값의 순서를 섞은 사본 리턴 #################################################');
+            _.go(_.shuffle([1, 2, 3, 4, 5]), console.log);
+
+            console.log('_.sample(list, [n]) : 임의의 샘플 리턴, n값은 샘플수 배열 리턴 #################################################');
+            _.go(_.sample([1, 2, 3, 4, 5]), console.log);
+            _.go(_.sample([1, 2, 3, 4, 5], 2), console.log);
+
+            console.log('_.toArray(list) : 리스트를 진짜 배열로 리턴, arguments 객체 변경시 유용 #################################################');
+            _.go(((...args) => _.toArray(args).slice(1))(1, 2, 3, 4), console.log); // [2,3,4]
+            _.go((function () { return _.toArray(arguments).slice(1) })(1, 2, 3, 4), console.log); // [2,3,4]
+
+            console.log('_.size(list) : 리스트 값의 개수 리턴 #################################################');
+            _.go(_.size({ one: 1, two: 2, three: 3, four: undefined, five: null, six: 1 }), console.log); // 6
+
+            console.log('_.partition(list, predicate) : 하나의 배열을 predicate 만족/비만족 배열로 나눔 #################################################');
+            _.go(_.partition([0, 1, 2, 3, 4, 5, 6], n => n % 2 != 0), console.log); // [[1,3,5], [0,2,4,6]]
+
+            console.log('_.sum(list, iteratee) : 배열의 내부 값에 iteratee를 적용한 값들을 더함 #################################################');
+            _.go(_.sum([1, 2, 3], n => n * 10), console.log); // 60
+            _.go(_.sum(['a', 'b', 'c'], c => c.toUpperCase()), console.log); // ABC
+
+            console.log('Array #################################################');
+            console.log('_.first(array, [n]) : 배열의 첫번째 원소 리턴, n으로 몇 개까지 정함 #################################################');
+            _.go(_.first([1, 2, 3]), console.log); // 1
+            _.go(_.first([1, 2, 3], 1), console.log); // [1]
+
+            console.log('_.last(array, [n]) : 배열의 마지막 원소 리턴, n으로 몇 개까지 정함 #################################################');
+            _.go(_.last([1, 2, 3]), console.log); // 3
+            _.go(_.last([1, 2, 3], 1), console.log); // [3]
+
+            console.log('_.initial(array, [n]) : 배열의 마지막 요소만 제외한 배열 리턴 #################################################');
+            _.go(_.initial([1, 2, 3]), console.log); // [1,2]
+
+            console.log('_.rest(array, [n]) : 배열의 첫번째 요소만 제외한 배열 리턴 #################################################');
+            _.go(_.rest([1, 2, 3]), console.log); // [2,3]
+
+            console.log('_.compact(array, [n]) : 배열의 모든 거짓 값을 제거한 사본 리턴 #################################################');
+            _.go(_.compact([0, 1, false, 3, '', 3, undefined, null]), console.log); // [1,3,3]
+
+            console.log('_.flatten(array, [noDeep]) : 중첩 배열을 폄, noDeep=true 배열을 한단계만 풂 #################################################');
+            _.go(_.flatten([1, [2], [3, [[4]]]]), console.log);  //[1,2,3,4]
+            _.go(_.flatten([1, [2], [3, [[4]]]], true), console.log);  //[1,2,3,[[4]]]
+
+            console.log('_.without(array, *values) : values와 같은 값이 제거된 배열 사본 리턴 #################################################');
+            _.go(_.without([1, 2, 3, 0, 1, 3, 1], 0, 1), console.log); // [2,3,3]
+
+            console.log('_.union(*arrays) : 합집합 배열 리턴 #################################################');
+            _.go(_.union([1, 2, 3], [101, 2, 1, 10], [2, 1]), console.log); // [1,2,3,101,10]
+
+            console.log('_.intersection(*arrays) : 교집합 배열 리턴 #################################################');
+            _.go(_.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]), console.log); // [1,2]
+
+            console.log('_.difference(array, *others) : 첫번째 배열과 비교하여 하나의 차집한 배열 리턴 #################################################');
+            _.go(_.difference([1, 2, 3, 4, 5], [5, 2, 10]), console.log); // [1,3,4]
+
+            console.log('_.uniq(array, iteratee) : 중복 제거된 배열 리턴 #################################################');
+            _.go(_.uniq([1, 2, 3, 4, 5, 5, 2, 10]), console.log); // [1,2,3,4,5,10]
+
+            console.log('_.zip(*arrays) : 배열들의 값 중 인덱스가 동일한 값끼리 묶은 다중 배열 리턴 #################################################');
+            _.go(_.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]), console.log); //[["moe", 30, true], ["larry", 40, false], ["curly", 50, false]]
+
+            console.log('_.unzip(*arrays) : <-> _.zip #################################################');
+            _.go(_.unzip([["moe", 30, true], ["larry", 40, false], ["curly", 50, false]]), console.log); //['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false]
+
+            console.log('_.object(list, [values]) : 배열->객체 #################################################');
+            _.go(_.object([['moe', 30], ['larry', 40], ['curly', 50]]), console.log); // {moe: 30, larry: 40, curly: 50}
+            _.go(_.object(['moe', 'larry', 'curly'], [30, 30, 40]), console.log);   // {moe: 30, larry: 40, curly: 50}
+
+            console.log('_.indexOf(array, value, [isSorted]) : 못찾으면 -1 #################################################');
+            _.go(_.indexOf([1, 2, 2, 2, 3, 4], 2), console.log); // 3
+            console.log('_.lastIndexOf(array, value, [isSorted]) : 못찾으면 -1 #################################################');
+            _.go(_.lastIndexOf([1, 2, 2, 2, 3, 4], 2), console.log); // 3
+
+            console.log('_.sortedIndex(list, value, [iteratee]) : 리스트를 탐색하며 value가 삽입되었을 때 리스트의 정렬된 상태를 유지할 수 있는 위치의 인덱스를 찾음 #################################################');
+            _.go(_.sortedIndex([1, 2, 2, 2, 3, 4], 2), console.log); // 1
+            //error: _.go(_.sortedIndex([{ name: 'moe', age: 40 }, { name: 'curly', age: 60 }], { name: 'larry', age: 50 }, (a, b) => a.age - b.age), console.log); // 1
+            // var stooges = [{ name: 'moe', age: 40 }, { name: 'curly', age: 60 }];
+            // error: _.go(_.sortedIndex(stooges, { name: 'larry', age: 50 }, 'age'), console.log);
+
+            console.log('_.findIndex(array, predicate) : _.indexOf와 같은 일을 하지만 predicate가 참을 반환하는 값의 인덱스 리턴 #################################################');
+            var isOdd = n => n % 2 != 0;
+            _.go(_.findIndex([4, 6, 8, 12], isOdd), console.log);    // -1
+            _.go(_.findIndex([4, 6, 7, 12], isOdd), console.log);    // 2
+
+            console.log('_.findLastIndex(array, predicate) : _.lastIndexOf와 같은 일을 하지만 predicate가 참을 반환하는 값 역순 탐색하여 인덱스 리턴 #################################################');
+            var users = [{ 'id': 1, 'name': 'Bob', 'last': 'Brown' },
+            { 'id': 2, 'name': 'Ted', 'last': 'White' },
+            { 'id': 3, 'name': 'Frank', 'last': 'James' },
+            { 'id': 4, 'name': 'Ted', 'last': 'Jones' }];
+            _.go(_.findLastIndex(users, user => user.name = 'Ted'), console.log); // 1
+
+            console.log('_.range([start], stop, [step]) : 범위를 정해 정수로 구성된 배열 리턴 #################################################');
+            _.go(_.range(3), console.log); // [0,1,2]
+            _.go(_.range(1, 3), console.log); // [1,2]
+            _.go(_.range(0, 11, 5), console.log); // [0,5,10]
+            _.go(_.range(0, -11, -5), console.log); // [0,-5,-10]
+            _.go(_.range(0), console.log); // []
+
+            console.log('_.remove(list, value) : 값을 지움 #################################################');
+            _.go(_.remove([0, 1, 3, 3, 5], 3), console.log); // [0,1,3,5] 첫번째 찾은 것만 지움
+
+            console.log('_.removeByIndex(list, index) : 해당 index값을 지움 #################################################');
+            var list = [0, 1, 2, 3, 4, 9];
+            _.removeByIndex(list, 5);   // 원본 배열을 리턴하지 않음에 주의!!
+            _.go(list, console.log); // [0,1,2,3,4]
         });
     </script>
 
