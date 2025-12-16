@@ -268,11 +268,181 @@
             var list = [0, 1, 2, 3, 4, 9];
             _.removeByIndex(list, 5);   // 원본 배열을 리턴하지 않음에 주의!!
             _.go(list, console.log); // [0,1,2,3,4]
+
+            console.log('Object #################################################');
+            console.log('_.keys(object) : 키 배열 리턴 #################################################');
+            _.go(_.keys({ one: 1, two: 2, three: 3 }), console.log); // ['one','two','three']
+            console.log('_.values(object) : 값 배열 리턴 #################################################');
+            _.go(_.values({ one: 1, two: 2, three: 3 }), console.log); // [1,2,3]
+            console.log('_.val(object) : 프로퍼티 해당 값 리턴 #################################################');
+            _.go(_.val({ one: 1, two: 2, three: 3 }, 'one'), console.log); // 1
+            console.log('_.mapObject(object, iteratee) : _.map(배열 생성)과 유사, {} 생성 #################################################');
+            _.go(_.mapObject({ one: 1, two: 2, three: 3 }, (v, k) => v + 5), console.log); // { one: 6, two: 7, three: 8 }
+            console.log('_.pairs(object) : [key, val] 형태의 다중 배열 리턴 #################################################');
+            _.go(_.pairs({ one: 1, two: 2, three: 3 }), console.log); // [["one", 1], ["two", 2], ["three", 3]]
+            console.log('_.invert(object) : 키/값 반대로, 이 때 모든 값은 유니크하고 문자열로 나타낼 수 있어야 함 #################################################');
+            _.go(_.invert({ one: 1, two: 2, three: 3 }), console.log); // {1: 'one', 2: 'two', 3: 'three'}
+            console.log('_.functions(object) : 객체의 메소드들 이름 정렬된 상태의 배열 리턴 #################################################');
+            _.go(_.functions(_), console.log); // ["all", "any", "bind", "bindAll", "clone", "compact", "compose" ...
+            console.log('_.findKey(object, predicate) : 객체를 위한 _.findIndex, predicate 참인 key 리턴 #################################################');
+            _.go(_.findKey({ Moe: 'moses', Larry: 'Louis', Curly: 'Jerome' }, val => /uis$/.test(val)), console.log); // Larry
+            console.log('_.extend(destination, *sources)) : 얕은 복사 #################################################');
+            _.go(_.extend({ name: 'moe' }, { age: 50 }, { height: 180 }), console.log); // {name: 'moe', age: 50, height: 180}
+            console.log('_.pick(object, *keys)) : 키가 일치하는 속성을 뽑은 새로운 객체 리턴 #################################################');
+            _.go(_.pick({ name: 'moe', age: 50, userid: 'moel' }, 'name'), console.log);
+            _.go(_.pick({ name: 'moe', age: 50, userid: 'moel' }, ['name', 'age']), console.log); // {name: 'moe', age: 50}
+            _.go(_.pick({ name: 'moe', age: 50, userid: 'moel' }, (v, k, o) => _.isNumber(v)), console.log); // {age: 50}
+            console.log('_.omit(object, *keys)) : 키가 일치하는 속성을 뺀 새로운 객체 리턴 #################################################');
+            _.go(_.omit({ name: 'moe', age: 50, userid: 'moel' }, 'name'), console.log);
+            _.go(_.omit({ name: 'moe', age: 50, userid: 'moel' }, ['name', 'age']), console.log);
+            _.go(_.omit({ name: 'moe', age: 50, userid: 'moel' }, (v, k, o) => _.isNumber(v)), console.log);
+            console.log('_.defaults(object, *defaults)) : undefined를 default값으로 채움 #################################################');
+            _.go(_.defaults({ flavor: 'choco' }, { flavor: 'vanilla', sprinkles: 'lots' }), console.log); // {flavor: 'choco', sprinkles: 'lots'}
+            console.log('_.clone(object) : 얕은 복사, 중첩 객체는 복제하지 않고 참조 #################################################');
+            _.go(_.clone({ name: 'moe' }), console.log); // {name:'moe'}
+            console.log('_.has(object, key) : 특정 키가 존재하는지 #################################################');
+            _.go(_.has({ a: 1, b: 2, c: 3 }, 'b'), console.log); // true
+
+            // ########### _.method
+            console.log('_.method(method, [*arguments]) : 객체의 메소드를 실행할 함수 리턴, 메소드에게 전달한 arguments도 받음 #################################################');
+            _.go($('body'),
+                _.method('find', '#main'),
+                _.first,
+                console.log
+            );
+            _.go(('hello partial.js'),
+                _.method('replace', 'partial', 'lodash'),
+                _.method('toUpperCase'),
+                console.log
+            );
+            _.go([1, 2, 3, 4, 5],
+                _.method('slice', 1, 4),
+                console.log
+            );
+            var nums = [1, 2, 3, 4, 5];
+            _.go(nums,
+                _.method('pop'),
+                __(result => `제거 요소 : ${result}`, console.log),
+                (data) => Promise.resolve(data) // then 사용을 위해 강제 Promise 반환
+            ).then(() => console.log('원본 배열 : ', nums)).catch(err => console.error(err));
+
+            console.log('_.isEqual(object, other) : 두 객체의 값을 비교해서 같은지 확인 #################################################');
+            var a = { name: 'moe', luckyNumbers: [1, 2, 3] };
+            var b = { name: 'moe', luckyNumbers: [1, 2, 3] };
+            var c = { name: 'moe', luckyNumbers: [4, 5, 6] };
+            console.log(a == b);            // false
+            console.log(_.isEqual(a, b));   // true
+            console.log('_.isMatch(object, properties) : 두 객체의 값을 비교해서 같은지 확인 #################################################');
+            console.log(_.isMatch(c, { name: 'moe' }));    // true
+            console.log('_.isEmpty(object) : 객체가 비어 있는지 #################################################');
+            console.log(_.isEmpty(a)); // false
+            console.log(_.isEmpty({})); // true
+            console.log('_.isElement(object) : 객체가 DOM 엘리먼트인지 #################################################');
+            console.log(_.isElement($('body')[0])); // true
+            console.log('_.isArray(object) : 객체가 배열인지 #################################################');
+            (function () {
+                console.log(arguments);
+                console.log('arguments is array ? ', _.isArray(arguments));  // false
+                console.log('arguments is arrayLike ? ', _.isArrayLike(arguments));  // true
+                console.log(_.isArray(_.toArray(arguments)));   // true
+
+                // isXXX
+                console.log('arguments is object ? ', _.isObject(arguments)); // true
+                console.log('arguments is arguments ? ', _.isArguments(arguments)); // true
+                console.log('alert is function ? ', _.isFunction(alert)); // true
+                console.log('"str" is string ? ', _.isString('str')); // true
+                console.log('5 is number ? ', _.isNumber(5)); // true
+                console.log(new Date(), ' is date ? ', _.isDate(new Date())); // true
+                console.log('/mar/ is RegExp? ', _.isRegExp(/mar/)); // true
+                try {
+                    throw new TypeError('Example');
+                } catch (err) {
+                    console.log('isError ? ', _.isError(err));
+                }
+            })(1, 2, 3);
+
+
+            console.log('Function #################################################');
+            console.log('_.memoize(function, [hashFunction]) : 함수 리턴 저장, 동일 인자시 저장 값 리턴 #################################################');
+            var mult5 = _.memoize(a => a * 5);
+            console.log(mult5(1));
+            console.log(mult5(5));
+            console.log(mult5(1));  // cached
+            console.log('_.memoize2(function, [hashFunction]) : 불변적으로 값을 다룰 때 성능/관리 유용, 불변적으로 값을 다루기기만하면 캐시를 비우는 것도 자동으로 이루어 짐 ################################################');
+            var evens = _.memoize2(function (list) {
+                console.log('함수 본체에 들어와서 loop 실행');
+                return _.filter(list, function (num) {
+                    return num % 2 == 0;
+                })
+            });
+            var list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            console.log(evens(list));
+            // 함수 본체에 들어와서 loop 실행
+            // [2, 4, 6, 8, 10]
+            console.log(evens(list));
+            // [2, 4, 6, 8, 10] (캐시를 사용하여 loop를 돌지 않음)
+            list = list.concat(11, 12); // _.memoize2는 불변적으로 값을 다룰 때 성능과 관리가 유용합니다.
+            console.log(list);
+            // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            console.log(evens(list));
+            // 함수 본체에 들어와서 loop 실행
+            // [2, 4, 6, 8, 10, 12]
+            console.log(evens(list));
+            // [2, 4, 6, 8, 10, 12] (캐시를 사용하여 loop를 돌지 않음)
+
+            console.log('_.delay(function, wait, *arguments) : wait(밀리초) 이후 함수 호출 #################################################');
+            _.delay(console.log, 500, '_.delay function executed');
+            console.log('_.defer(function, *arguments) : setTimeout 0, 콜 스택이 다 비워진 후에 함수가 호출됨 #################################################');
+            _.defer(console.log, 'deferred call');
+            console.log('direct call');
+            console.log('_.once(function) : 한 번만 호출가능 #################################################');
+            var oneTime = _.once(() => '_.once(function) : only one time');
+            console.log(oneTime());
+            // console.log(oneTime()); // not works .. 여야 하는데 계속 실행되는데?
+
+            console.log('_.throttle(function, wait, [options]) : 설명 참고 #################################################');
+            /*
+                _.throttle(function, wait, [options])은 함수를 받아 새로운 함수 throttled를 리턴합니다. 
+                throttled는 처음 호출할때 바로 실행됩니다. 
+                그 이후의 지정된 시간 동안 반복된 호출은 한번만 실행됩니다. 
+                옵션값인 {leading: false}는 throttled가 처음 실행될 때 기본값과 같이 바로 실행 되는 것이 아니라, 
+                지정한 시간 후에 실행됩니다. 
+                {trailing: false}는 지정한 시간 전의 실행은 모두 무효가 됩니다. 
+                즉 throttled가 지정된 시간 전에 반복적으로 호출 되어도 
+                지정된 시간이 지나기 전까지의 호출은 다 무효가 됩니다. 
+                지정된 시간이 지난 후에 호출해야 실행됩니다. 
+                기본 옵션값은 {leading: true, trailing: true}입니다.
+            */
+            var throttled = _.throttle(() => console.log('_.throttle : ' + new Date(), 1000)); //, { leading: true, trailing: false }));
+            // $(window).scroll(throttled);    // 원하는 동작 안하는 것 같음.
+
+            console.log('_.debounce(function, wait, [immediate]) : 설명 참고 #################################################');
+            /*
+            _.debounce(function, wait, [immediate]) _.debounce는 함수를 받아 새로운 함수 debounced를 리턴합니다. 
+            (1)debounced를 실행하면 지정된 시간이 지난 후 받아둔 함수를 실행합니다. 
+            만일 지정된 시간 전에 debounced가 다시 실행되면 함수 실행은 다시 지정된 시간 이후로 미뤄집니다. 
+            [immediate]에 true를 넘기면 debounced의 첫 번째 실행은 무조건 실행하고, 
+            그 후 시간 안에 실행된 함수는 무시됩니다.
+            */
+            var debounced = _.debounce(() => console.log('_.debounced : ' + new Date(), 1000)); //, { leading: true, trailing: false }));
+            // $(window).scroll(debounced); //원하는 동작 안하는 것 같음.
+
+            console.log('_.bind(function, object, *arguments) : 함수와 그 함수의 객체(this)를 지정하여 함수를 만듭니다. 옵션으로 함수의 인자를 받을 수 있습니다. #################################################');
+            var func = _.bind(function (hi) { return hi + ': ' + this.name }, { name: 'moe' }, 'hello');
+            console.log(func());
+
         });
     </script>
 
 <body>
-
+    <div id="main">
+        <h3>partial.js - functional javascript programming</h3>
+    </div>
+    <script>
+        for (var i = 0; i < 100; i++) {
+            document.write('<h5>throttle test : ' + i + '<br/>');
+        }
+    </script>
 </body>
 
 </html>
