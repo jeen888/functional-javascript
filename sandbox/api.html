@@ -431,6 +431,70 @@
             var func = _.bind(function (hi) { return hi + ': ' + this.name }, { name: 'moe' }, 'hello');
             console.log(func());
 
+
+
+            console.log('Utility #################################################');
+            console.log('_.identity(value) : 받은 값을 그대로 리턴 #################################################');
+            console.log('_.constant(value) : 받은 값을 리턴하는 함수를 리턴 #################################################');
+            var stooge = { name: 'moe' };
+            console.log(stooge === _.identity(stooge));// true
+            console.log(stooge === _.c(stooge)());  // true
+            console.log('_.noop(): ', _.noop());  // 항상 undefined 반환
+            console.log('_.random(min, max) : min과 max 사이의 임의의 정수 반환 #################################################');
+            console.log(_.random(10, 20));
+            console.log('_.hi(value) : console.log로 value를 출력한 뒤 value 리턴 #################################################');
+            // _.hi = _.identity;  // debug 용으로 hi 쓴 후 한방에 console.log를 없앨 때 이용하면 개꿀!
+            _.go({ name: 'moe' },
+                _.hi,
+                console.table
+            )
+
+
+            console.log('JSON Selector #################################################');
+            console.log('_.sel(object, selector) : 깊은 값 조회 쿼리 #################################################');
+            /*
+                ()를 사용할 때 id로 비교하는 경우에는 #을 사용하는 방식이 성능이 가장 좋습니다. 
+                JSON Selector는 ()를 통해 find(predicate)를 작성할 수 있어 단순히 key들로 찾아가는 방법보다 유용합니다. 
+                JSON Selector의 ()는 함수이므로, id 비교외에 다른 조건도 얼마든지 만들 수 있습니다.
+            */
+            var users = [
+                {
+                    id: 1,
+                    name: 'BJ',
+                    post_count: 3,
+                    posts: [
+                        { id: 1, body: '하이', comments: [{ id: 3, body: '코멘트3' }] },
+                        { id: 2, body: '하이2', comments: [{ id: 1, body: '코멘트1' }, { id: 2, body: '코멘트2' }] },
+                        { id: 4, body: '하이4', comments: [{ id: 4, body: '코멘트4' }, { id: 5, body: '코멘트5' }] }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'PJ',
+                    post_count: 1,
+                    posts: [
+                        { id: 3, body: '하이3', comments: [] }
+                    ]
+                }
+            ];
+            // key로만 찾기
+            console.log(
+                _.sel(users, '0->name'), // BJ
+                _.sel(users, '1->name'), // PJ
+                _.sel(users, '0->post_count'), // 3
+                _.sel(users, '1->post_count'), // 1
+                _.sel(users, '0->posts->1->body') // 하이2
+            );
+            // 괄호로 내부적으로 find + predicate 실행하기
+            console.log(
+                _.sel(users, '(u=>u.id==1)->name'), // BJ
+                _.sel(users, '(u=>u.id==1)->posts->(p=>p.id==4)->body') // 하이4
+            );
+            // 동일 코드를 아래처럼 더 짧게 표현할 수 있습니다.
+            console.log(
+                _.sel(users, '($.id==1)->name'), // BJ
+                _.sel(users, '(#1)->posts->(#4)->body') // 하이4
+            );
         });
     </script>
 
