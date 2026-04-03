@@ -10,13 +10,11 @@
             console.log('_.partial(= _) : 커링 #################################################');
             var sub = (a, b) => a - b;
             // let sub10 = _.partial(sub, 10);
-            var sub10 = _(sub, 10); // _==_.partial
+            var sub10 = _(sub, 10); // _ == _.partial
             console.log(sub10(7));    // 3
 
             var sub1 = _(sub, _, 10);
             console.log(sub1(7));   // -3
-
-
 
 
             console.log('___ : 가변인자 placeholder #################################################');
@@ -38,7 +36,7 @@
             var sum = (a, b) => a + b;
             var square = a => a * a;
 
-            var f1 = __(sum, square, square);
+            var f1 = __(sum, square, square); // sum -> square -> square
             var result = f1(1, 2);
             console.log(result); // 81
 
